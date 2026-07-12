@@ -57,6 +57,33 @@ v1では地図表示を後回しにし、まず一覧・詳細の記録表示を
 - タイル: 国土地理院（GSI）の地形図タイル（無料・日本の山岳地形の精度が高いため）
 - GPXパース: 依存を増やさず、座標・標高列を取るだけの簡易パーサを自前で用意する想定
 
+### ユーザーページ
+
+山行記録に参加者情報を紐付け、参加者ごとのページで参加した山行とジャンル別の参加回数を見られるようにする。
+
+**目的**
+
+- 山行ページ（`/records/[slug]`）: 参加者名から各ユーザーページへ遷移できるようにする
+- ユーザーページ（`/users/[slug]`）: そのユーザーが参加した山行記録の一覧と、ジャンル別の参加回数を表示する
+
+**データモデル**
+
+- `contents/users/{slug}.mdx` を新設し、記録と同じパターン（1ファイル1エンティティ、frontmatter + 本文）を踏襲する。frontmatterは `name`（表示名）。本文は自己紹介など任意（[lib/users.ts](lib/users.ts) の `UserFrontmatter` 型で定義）。
+- `RecordFrontmatter.members` は「表示名の配列」ではなく「ユーザーslugの配列」として扱う。既存コンテンツの `members: [A, B]` は本文中の参加者リストと整合していないプレースホルダーだったため、`[bini, mishin, yamazaki, hakusai, himo]` に修正した。
+- 記録の「ジャンル」を新フィールド `genre` としてfrontmatterに追加した。表記ゆれによる集計ズレを防ぐため自由文字列にはせず、[lib/records.ts](lib/records.ts) の `GENRES`（`登山` / `山スキー` / `クライミング` / `沢登り`）による固定値の `Genre` 型で制約している。既存の `area` は地域（例: 北アルプス）を表す別軸の情報であり、ジャンルとは混同しない。
+- `members` に `contents/users/` に存在しないユーザーslugが指定されていた場合はビルドを失敗させる。[lib/users.ts](lib/users.ts) の `validateRecordMembers()` が全記録の `members` を全ユーザーslugと突き合わせ、不整合があれば例外を投げる。`app/records/[slug]/page.tsx` の `generateStaticParams` から呼び出している。
+
+**ルーティングとレンダリング**
+
+- `app/users/[slug]/page.tsx` を新設。`generateStaticParams` で全ユーザーslugを静的生成する。表示内容はユーザー名、ジャンル別参加回数（例: 山スキー 2件 / 登山 3件）、参加した山行記録一覧（日付・タイトル、`/records/[slug]`へのリンク）。
+- `app/users/page.tsx` を新設。`/records` と対称的な全ユーザー一覧ページ。
+- `app/records/[slug]/page.tsx` の参加者表示を、プレーンテキストから各メンバー名 → `/users/[slug]` へのリンクに変更した。
+
+**lib層**
+
+- `lib/users.ts` を新設: `getAllUserSlugs()` / `getAllUsers()` / `getUser(slug)`（[lib/records.ts](lib/records.ts) と対称的な構成）、`validateRecordMembers()`（`members` とユーザーslugの整合性チェック）。
+- [lib/records.ts](lib/records.ts) に追加: `getRecordsByMember(slug)`（指定ユーザーが参加した記録一覧）、`getGenreCounts(records)`（記録配列からジャンル別件数を集計する純粋関数）。
+
 ## Commands
 
 - `npm run dev` — 開発サーバー起動

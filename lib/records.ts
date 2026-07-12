@@ -4,10 +4,14 @@ import matter from "gray-matter";
 
 const CONTENTS_DIR = path.join(process.cwd(), "contents");
 
+export const GENRES = ["登山", "山スキー", "クライミング", "沢登り"] as const;
+export type Genre = (typeof GENRES)[number];
+
 export type RecordFrontmatter = {
   title: string;
   date: string;
   area: string;
+  genre: Genre;
   members: string[];
   gpx?: string;
 };
@@ -51,4 +55,19 @@ export async function getRecord(slug: string) {
   } catch {
     return null;
   }
+}
+
+export async function getRecordsByMember(userSlug: string): Promise<RecordMeta[]> {
+  const records = await getAllRecords();
+  return records.filter((record) => record.members.includes(userSlug));
+}
+
+export function getGenreCounts(records: RecordMeta[]): Record<Genre, number> {
+  const counts = Object.fromEntries(
+    GENRES.map((genre) => [genre, 0])
+  ) as Record<Genre, number>;
+  for (const record of records) {
+    counts[record.genre] += 1;
+  }
+  return counts;
 }

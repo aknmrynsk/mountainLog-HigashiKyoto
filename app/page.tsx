@@ -16,6 +16,12 @@ export default function Home() {
           記録一覧を見る
         </Link>
         <Link
+          href="/users"
+          className="flex h-12 items-center justify-center rounded-full border border-black/[.08] px-6 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+        >
+          メンバー
+        </Link>
+        <Link
           href="/about"
           className="flex h-12 items-center justify-center rounded-full border border-black/[.08] px-6 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
         >
