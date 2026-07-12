@@ -52,22 +52,23 @@ export default async function Page({
         <p className="mt-1 text-sm text-zinc-500">
           {meta.date} ・ {meta.area}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <ul className="mt-4 flex flex-col gap-3">
           {meta.members.map((member) => (
-            <Link
-              key={member}
-              href={`/users/${member}`}
-              className="flex items-center gap-1.5 rounded-full border border-black/10 py-1 pl-1 pr-3 text-sm text-zinc-600 transition-colors hover:border-accent hover:text-accent dark:border-white/10 dark:text-zinc-400"
-            >
-              <Avatar
-                src={userMap.get(member)?.icon}
-                name={userMap.get(member)?.name ?? member}
-                size={24}
-              />
-              {userMap.get(member)?.name ?? member}
-            </Link>
+            <li key={member}>
+              <Link
+                href={`/users/${member}`}
+                className="flex items-center gap-3 rounded-lg border border-black/10 p-3 text-lg font-medium transition-shadow hover:shadow-md dark:border-white/10"
+              >
+                <Avatar
+                  src={userMap.get(member)?.icon}
+                  name={userMap.get(member)?.name ?? member}
+                  size={40}
+                />
+                {userMap.get(member)?.name ?? member}
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </header>
       <MDXRemote source={content} />
     </article>
