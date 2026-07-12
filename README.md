@@ -86,11 +86,21 @@ v1では地図表示を後回しにし、まず一覧・詳細の記録表示を
 
 ### アイコン・サムネイル
 
-- ユーザーのfrontmatterに`icon`（任意）、記録のfrontmatterに`thumbnail`（任意）を追加し、画像パス（例: `/avatars/{slug}.jpg`、`/thumbnails/{slug}.jpg`。実ファイルは`public/`配下に置く）を指定できるようにした。
-- 実写真がまだ無いため、未指定時のフォールバックを用意している（[components/Avatar.tsx](components/Avatar.tsx)、[components/Thumbnail.tsx](components/Thumbnail.tsx)）。
+- ユーザーのfrontmatterに`icon`（任意）、記録のfrontmatterに`thumbnail`（任意）を追加し、画像パスを指定できるようにした。
+- 実写真が無い場合のフォールバックを用意している（[components/Avatar.tsx](components/Avatar.tsx)、[components/Thumbnail.tsx](components/Thumbnail.tsx)）。
   - `Avatar`: `icon`未指定の場合、名前から生成した色付きイニシャルアバターを表示する（人ごとに色が変わる）。
   - `Thumbnail`: `thumbnail`未指定の場合、🏔️のプレースホルダーを表示する。
-- 実写真を追加する際は、画像ファイルを`public/avatars/`または`public/thumbnails/`配下に置き、対象のfrontmatterに`icon:`/`thumbnail:`でパスを指定すれば自動的に切り替わる。
+
+**画像の置き場所と反映先**
+
+`public/` 配下に置いたファイルは、そのパスがそのままサイトのURLパスになる（Next.jsの静的配信の仕組み）。画像を追加する手順は以下の通り。
+
+| 画像の種類 | 置き場所 | frontmatterでの指定 | 反映されるページ |
+| --- | --- | --- | --- |
+| メンバーアイコン | `public/avatars/{ユーザーslug}.jpg` | `contents/users/{ユーザーslug}.mdx` の `icon: /avatars/{ユーザーslug}.jpg` | `/users`一覧、`/users/[slug]`詳細、`/records/[slug]`詳細の参加者表示 |
+| 山行サムネイル | `public/thumbnails/{記録slug}.jpg` | `contents/{記録slug}.mdx` の `thumbnail: /thumbnails/{記録slug}.jpg` | `/records`一覧、`/records/[slug]`詳細のヒーロー画像、`/users/[slug]`の参加記録一覧 |
+
+ファイルを置いてfrontmatterにパスを追記するだけで、コード変更なしに反映される。拡張子は`.jpg` `.png` `.webp`などNext.jsの`next/image`が扱える形式であれば良い。現状、ヒモの`icon`のみ実写真（`public/avatars/himo.jpg`）を設定済みで、他は未設定のためフォールバック表示になっている。
 
 ## Commands
 
