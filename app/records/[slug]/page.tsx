@@ -3,6 +3,8 @@ import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote-client/rsc";
 import { getAllSlugs, getRecord } from "@/lib/records";
 import { getAllUsers, validateRecordMembers } from "@/lib/users";
+import { Avatar } from "@/components/Avatar";
+import { Thumbnail } from "@/components/Thumbnail";
 
 export async function generateStaticParams() {
   await validateRecordMembers();
@@ -24,26 +26,32 @@ export default async function Page({
 
   const { meta, content } = record;
   const users = await getAllUsers();
-  const userNames = new Map(users.map((user) => [user.slug, user.name]));
+  const userMap = new Map(users.map((user) => [user.slug, user]));
 
   return (
     <article className="prose mx-auto max-w-2xl px-6 py-16 dark:prose-invert">
       <header className="not-prose mb-8">
+        <Thumbnail src={meta.thumbnail} alt={meta.title} className="mb-6" />
         <p className="text-sm text-zinc-500">
           {meta.date} ・ {meta.area} ・ {meta.genre}
         </p>
         <h1 className="text-3xl font-semibold">{meta.title}</h1>
-        <p className="mt-2 text-sm text-zinc-500">
-          メンバー:{" "}
-          {meta.members.map((member, index) => (
-            <span key={member}>
-              {index > 0 && ", "}
-              <Link href={`/users/${member}`} className="underline">
-                {userNames.get(member) ?? member}
-              </Link>
-            </span>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          {meta.members.map((member) => (
+            <Link
+              key={member}
+              href={`/users/${member}`}
+              className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400"
+            >
+              <Avatar
+                src={userMap.get(member)?.icon}
+                name={userMap.get(member)?.name ?? member}
+                size={24}
+              />
+              {userMap.get(member)?.name ?? member}
+            </Link>
           ))}
-        </p>
+        </div>
       </header>
       <MDXRemote source={content} />
     </article>

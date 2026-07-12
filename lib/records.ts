@@ -14,6 +14,7 @@ export type RecordFrontmatter = {
   genre: Genre;
   members: string[];
   gpx?: string;
+  thumbnail?: string;
 };
 
 export type RecordMeta = RecordFrontmatter & { slug: string };

@@ -7,6 +7,7 @@ const USERS_DIR = path.join(process.cwd(), "contents", "users");
 
 export type UserFrontmatter = {
   name: string;
+  icon?: string;
 };
 
 export type UserMeta = UserFrontmatter & { slug: string };

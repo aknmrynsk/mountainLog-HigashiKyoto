@@ -84,6 +84,14 @@ v1では地図表示を後回しにし、まず一覧・詳細の記録表示を
 - `lib/users.ts` を新設: `getAllUserSlugs()` / `getAllUsers()` / `getUser(slug)`（[lib/records.ts](lib/records.ts) と対称的な構成）、`validateRecordMembers()`（`members` とユーザーslugの整合性チェック）。
 - [lib/records.ts](lib/records.ts) に追加: `getRecordsByMember(slug)`（指定ユーザーが参加した記録一覧）、`getGenreCounts(records)`（記録配列からジャンル別件数を集計する純粋関数）。
 
+### アイコン・サムネイル
+
+- ユーザーのfrontmatterに`icon`（任意）、記録のfrontmatterに`thumbnail`（任意）を追加し、画像パス（例: `/avatars/{slug}.jpg`、`/thumbnails/{slug}.jpg`。実ファイルは`public/`配下に置く）を指定できるようにした。
+- 実写真がまだ無いため、未指定時のフォールバックを用意している（[components/Avatar.tsx](components/Avatar.tsx)、[components/Thumbnail.tsx](components/Thumbnail.tsx)）。
+  - `Avatar`: `icon`未指定の場合、名前から生成した色付きイニシャルアバターを表示する（人ごとに色が変わる）。
+  - `Thumbnail`: `thumbnail`未指定の場合、🏔️のプレースホルダーを表示する。
+- 実写真を追加する際は、画像ファイルを`public/avatars/`または`public/thumbnails/`配下に置き、対象のfrontmatterに`icon:`/`thumbnail:`でパスを指定すれば自動的に切り替わる。
+
 ## Commands
 
 - `npm run dev` — 開発サーバー起動
