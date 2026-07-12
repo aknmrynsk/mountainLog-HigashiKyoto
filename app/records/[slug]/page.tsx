@@ -52,12 +52,15 @@ export default async function Page({
         <p className="mt-1 text-sm text-zinc-500">
           {meta.date} ・ {meta.area}
         </p>
-        <ul className="mt-4 flex flex-col gap-3">
+        <p className="mt-4 text-sm font-semibold tracking-wide text-zinc-500 uppercase">
+          参加者
+        </p>
+        <ul className="mt-2 flex flex-wrap gap-4">
           {meta.members.map((member) => (
             <li key={member}>
               <Link
                 href={`/users/${member}`}
-                className="flex items-center gap-3 rounded-lg border border-black/10 p-3 text-lg font-medium transition-shadow hover:shadow-md dark:border-white/10"
+                className="flex flex-col items-center gap-1 text-xs text-zinc-600 transition-colors hover:text-accent dark:text-zinc-400"
               >
                 <Avatar
                   src={userMap.get(member)?.icon}
